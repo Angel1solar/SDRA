@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Panel de Control - ESP32 Riego</title>
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        padding: 20px;
+    }
+    h1 { text-align: center; }
+    .card {
+        background: white;
+        padding: 15px;
+        margin: 10px auto;
+        width: 350px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px #ccc;
+    }
+    button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        margin: 5px;
+        cursor: pointer;
+    }
+    .on { background: green; color: white; }
+    .off { background: red; color: white; }
+</style>
+</head>
+<body>
+
+<h1>Panel de Control ESP32</h1>
+
+<div class="card">
+    <h3>Temperatura / Humedad</h3>
+    <p><b>Temperatura:</b> <span id="temp">---</span> °C</p>
+    <p><b>Humedad:</b> <span id="hum">---</span> %</p>
+</div>
+
+<div class="card">
+    <h3>Control de Salidas</h3>
+    <p>OUT1:
+        <button class="on" onclick="send('riego/out1','ON')">ON</button>
+        <button class="off" onclick="send('riego/out1','OFF')">OFF</button>
+    </p>
+
+    <p>OUT2:
+        <button class="on" onclick="send('riego/out2','ON')">ON</button>
+        <button class="off" onclick="send('riego/out2','OFF')">OFF</button>
+    </p>
+
+    <p>Ventilador (FAN):
+        <button class="on" onclick="send('riego/fan','ON')">ON</button>
+        <button class="off" onclick="send('riego/fan','OFF')">OFF</button>
+    </p>
+
+    <p>LED1:
+        <button class="on" onclick="send('riego/led1','ON')">ON</button>
+        <button class="off" onclick="send('riego/led1','OFF')">OFF</button>
+    </p>
+
+    <p>LED2:
+        <button class="on" onclick="send('riego/led2','ON')">ON</button>
+        <button class="off" onclick="send('riego/led2','OFF')">OFF</button>
+    </p>
+
+    <p>LED3:
+        <button class="on" onclick="send('riego/led3','ON')">ON</button>
+        <button class="off" onclick="send('riego/led3','OFF')">OFF</button>
+    </p>
+</div>
+
+<div class="card">
+    <h3>Lectura de Entradas</h3>
+    <p>IN1: <span id="in1">0</span></p>
+    <p>IN2: <span id="in2">0</span></p>
+    <p>IN3: <span id="in3">0</span></p>
+    <p>IN4: <span id="in4">0</span></p>
+</div>
+
+
+<script>
+    // ---------------------------
+    // CONFIGURACIÓN MQTT CLOUD
+    // ---------------------------
+    const mqtt_server = "wss://b63c8b4d7a7b4f8f9e9bfb8e4c5c.s2.eu.hivemq.cloud:8884/mqtt";
+    const mqtt_user   = "ADMIN_SDRA";
+    const mqtt_pass   = "PR0yecto25.inovacion.";
+
+    // Conectar al broker HiveMQ Cloud
+    const client = mqtt.connect(mqtt_server, {
+        username: mqtt_user,
+        password: mqtt_pass,
+        clean: true,
+        reconnectPeriod: 1000
+    });
+
+    client.on("connect", () => {
+        console.log("Conectado a HiveMQ");
+
+        // Suscribir a todos los tópicos necesarios
+        client.subscribe("riego/temperatura");
+        client.subscribe("riego/humedad");
+
+        client.subscribe("riego/in1");
+        client.subscribe("riego/in2");
+        client.subscribe("riego/in3");
+        client.subscribe("riego/in4");
+    });
+
+    // Recibir mensajes del ESP32
+    client.on("message", (topic, message) => {
+        let msg = message.toString();
+
+        if (topic === "riego/temperatura") document.getElementById("temp").innerText = msg;
+        if (topic === "riego/humedad") document.getElementById("hum").innerText = msg;
+
+        if (topic === "riego/in1") document.getElementById("in1").innerText = msg;
+        if (topic === "riego/in2") document.getElementById("in2").innerText = msg;
+        if (topic === "riego/in3") document.getElementById("in3").innerText = msg;
+        if (topic === "riego/in4") document.getElementById("in4").innerText = msg;
+    });
+
+    // Función para enviar comandos
+    function send(topic, msg) {
+        client.publish(topic, msg);
+    }
+</script>
+
+</body>
+</html>
