@@ -83,51 +83,43 @@
 
 
 <script>
-    // ---------------------------
-    // CONFIGURACIÓN MQTT CLOUD
-    // ---------------------------
     const mqtt_server = "wss://b63c8b4d7a7b4f8f9e9bfb8e4c5c.s2.eu.hivemq.cloud:8884/mqtt";
     const mqtt_user   = "ADMIN_SDRA";
     const mqtt_pass   = "PR0yecto25.inovacion.";
 
-    // Conectar al broker HiveMQ Cloud
-    const client = mqtt.connect("wss://b63c8b4d7a7b4f8f9e9bfb8e4c5c.s2.eu.hivemq.cloud:8884/mqtt", {
-    username: mqtt_user,
-    password: mqtt_pass,
-});
-
+    const client = mqtt.connect(mqtt_server, {
+        username: mqtt_user,
+        password: mqtt_pass,
+        protocol: "wss",
+        reconnectPeriod: 1000,
+        rejectUnauthorized: false  // ← NECESARIO PARA HIVEMQ CLOUD
+    });
 
     client.on("connect", () => {
         console.log("Conectado a HiveMQ");
 
-        // Suscribir a todos los tópicos necesarios
         client.subscribe("riego/temperatura");
         client.subscribe("riego/humedad");
-
         client.subscribe("riego/in1");
         client.subscribe("riego/in2");
         client.subscribe("riego/in3");
         client.subscribe("riego/in4");
+        client.subscribe("riego/out1");
     });
 
-    // Recibir mensajes del ESP32
     client.on("message", (topic, message) => {
         let msg = message.toString();
-
         if (topic === "riego/temperatura") document.getElementById("temp").innerText = msg;
         if (topic === "riego/humedad") document.getElementById("hum").innerText = msg;
-
         if (topic === "riego/in1") document.getElementById("in1").innerText = msg;
         if (topic === "riego/in2") document.getElementById("in2").innerText = msg;
         if (topic === "riego/in3") document.getElementById("in3").innerText = msg;
         if (topic === "riego/in4") document.getElementById("in4").innerText = msg;
     });
 
-    // Función para enviar comandos
     function send(topic, msg) {
         client.publish(topic, msg);
     }
 </script>
-
 </body>
 </html>
