@@ -43,8 +43,8 @@
 <div class="card">
     <h3>Control de Salidas</h3>
     <p>OUT1:
-        <button class="on" onclick="send('riego/out1','ON')">ON</button>
-        <button class="off" onclick="send('riego/out1','OFF')">OFF</button>
+        <button class="on" onclick="send('riego/out1','ON')">1</button>
+        <button class="off" onclick="send('riego/out1','OFF')">0</button>
     </p>
 
     <p>OUT2:
@@ -106,6 +106,7 @@
         client.subscribe("riego/in3");
         client.subscribe("riego/in4");
         client.subscribe("riego/out1");
+        client.subscribe("control-led");
     });
 
     client.on("message", (topic, message) => {
@@ -116,6 +117,7 @@
         if (topic === "riego/in2") document.getElementById("in2").innerText = msg;
         if (topic === "riego/in3") document.getElementById("in3").innerText = msg;
         if (topic === "riego/in4") document.getElementById("in4").innerText = msg;
+         if (topic === "control-led") document.getElementById("in4").innerText = msg;
     });
 
     function send(topic, msg) {
