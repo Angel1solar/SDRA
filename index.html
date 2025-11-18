@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 <title>Panel de Control - ESP32 Riego</title>
 <style>
     body {
@@ -80,7 +81,7 @@
     <p>IN4: <span id="in4">0</span></p>
 </div>
 
-<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
 
 <script>
     const mqtt_server = "wss://b63c8b4d7a7b4f8f9e9bfb8e4c5c.s2.eu.hivemq.cloud:8884/mqtt";
