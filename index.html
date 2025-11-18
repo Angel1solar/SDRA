@@ -91,12 +91,11 @@
     const mqtt_pass   = "PR0yecto25.inovacion.";
 
     // Conectar al broker HiveMQ Cloud
-    const client = mqtt.connect(mqtt_server, {
-        username: mqtt_user,
-        password: mqtt_pass,
-        clean: true,
-        reconnectPeriod: 1000
-    });
+    const client = mqtt.connect("wss://b63c8b4d7a7b4f8f9e9bfb8e4c5c.s2.eu.hivemq.cloud:8884/mqtt", {
+    username: mqtt_user,
+    password: mqtt_pass,
+});
+
 
     client.on("connect", () => {
         console.log("Conectado a HiveMQ");
